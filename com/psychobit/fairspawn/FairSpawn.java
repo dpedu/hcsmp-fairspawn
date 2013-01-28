@@ -3,7 +3,6 @@ package com.psychobit.fairspawn;
 import java.util.HashMap;
 
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -20,8 +19,8 @@ import com.psychobit.campfire.Campfire;
 import com.psychobit.campfire.PlayerData;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.topcat.npclib.nms.NPCEntity;
 import com.trc202.CombatTag.CombatTag;
+import com.trc202.CombatTagApi.CombatTagApi;
 
 /**
  * Makes spawn a fair place to play in regards to damage
@@ -100,7 +99,15 @@ public class FairSpawn extends JavaPlugin implements Listener
 		Player victim = ( Player ) ent;
 		
 		// Check for NPC
-		boolean isNPC = ((CraftEntity)ent).getHandle() instanceof NPCEntity;
+		boolean isNPC = false;
+		CombatTagApi combatApi;
+		if (getServer().getPluginManager().getPlugin("CombatTag") != null) {
+			combatApi = new CombatTagApi((CombatTag) getServer()
+					.getPluginManager().getPlugin("CombatTag"));
+			if (combatApi != null) {
+				isNPC = combatApi.isNPC(ent);
+			}
+		}
 		
 		// Check if the server is running campfire first
 		if ( this._campfire != null && !isNPC )
