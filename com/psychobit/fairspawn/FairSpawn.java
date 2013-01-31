@@ -6,10 +6,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
@@ -125,14 +128,28 @@ public class FairSpawn extends JavaPlugin implements Listener
 		
 		// Get the attacker
 		Player attacker = null;
-		if ( e.getDamager() instanceof Arrow )
-		{
+		// Check for arrow damage
+		if (e.getDamager() instanceof Arrow) {
 			// Get the arrow's owner
-			Arrow arrow = ( Arrow ) e.getDamager();
-			if ( !( arrow.getShooter() instanceof Player ) ) return;
-			attacker = ( Player ) arrow.getShooter();
-		} else if( !( e.getDamager() instanceof Player ) ) return;
-		else attacker = ( Player ) e.getDamager(); 
+			Arrow arrow = (Arrow) e.getDamager();
+			if (!(arrow.getShooter() instanceof Player))
+				return;
+			attacker = (Player) arrow.getShooter();
+		// Check for potion damage
+		} else if (e.getDamager() instanceof ThrownPotion) {
+			
+			ThrownPotion potion = (ThrownPotion) e.getDamager();
+			
+			if (!(potion.getShooter() instanceof Player)) {
+				return;
+			}
+			attacker = (Player) potion.getShooter();
+			
+		} else if (!(e.getDamager() instanceof Player)) {
+			return;
+		} else {
+			attacker = (Player) e.getDamager();
+		}
 
 		// Check attacker and make sure the server is running WorldGuard
 		if ( attacker != null && this._worldguard != null && !isNPC )
