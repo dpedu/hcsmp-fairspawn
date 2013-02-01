@@ -179,7 +179,6 @@ public class FairSpawn extends JavaPlugin implements Listener
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onHealthCT(EntityRegainHealthEvent e) {
-		System.out.println("[Fairspawn] DEBUG: HEALING EVENT");
 		Entity ent = e.getEntity();
 		if (!(ent instanceof Player)) {
 			return;
@@ -188,19 +187,16 @@ public class FairSpawn extends JavaPlugin implements Listener
 		
 		// If player is combat tagged, cancel.
 		if (isCombatTagged(victim.getName())) {
-			System.out.println("[Fairspawn] DEBUG: That bitch is combat tagged!");
 			return;
 		}
 		
 		// If player is not in a a safe zone, cancel.
 		if (this._worldguard.getRegionManager(victim.getWorld()).getApplicableRegions(victim.getLocation()).allows(DefaultFlag.PVP)) {
-			System.out.println("[Fairspawn] DEBUG: YOU AIN'T IN NO SAFE ZONE.");
 			return;
 		}
 		
 		// If item is not a potion, cancel.
 		if (!(e.getRegainReason() == RegainReason.MAGIC) && !(e.getRegainReason() == RegainReason.MAGIC_REGEN)  ) {
-			System.out.println("[Fairspawn] DEBUG: That isn'tf a 'magic' or 'regen' potion.");
 			return;
 		}
 		
